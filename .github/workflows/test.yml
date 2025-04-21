@@ -1,0 +1,56 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    services:
+      # Oracle Database Free 23ai, slim image: https://hub.docker.com/r/gvenzl/oracle-free
+      oracle:
+        image: gvenzl/oracle-free:23-slim
+        env:
+          ORACLE_PASSWORD: ci_only_system_pw
+        options: >-
+          --health-cmd healthcheck.sh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 30
+    env:
+      DB: //localhost/FREEPDB1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy the scripts into the database container
+        run: |
+          docker cp . ${{ job.services.oracle.id }}:/tmp/doc_util
+          docker exec -u 0 ${{ job.services.oracle.id }} chown -R oracle /tmp/doc_util
+
+      - name: Create the test users and other schemas (as SYSTEM)
+        run: docker exec -w /tmp/doc_util ${{ job.services.oracle.id }} sqlplus -s -L system/ci_only_system_pw@$DB @test/setup.sql
+
+      - name: Install DOC_UTIL (as DOCTOOLS)
+        run: docker exec -w /tmp/doc_util ${{ job.services.oracle.id }} sqlplus -s -L doctools/Doctools_1@$DB @install.sql
+
+      - name: Grant it to the test user
+        run: |
+          echo "GRANT EXECUTE ON doc_util TO doctest;" \
+            | docker exec -i -w /tmp/doc_util ${{ job.services.oracle.id }} sqlplus -s -L doctools/Doctools_1@$DB
+
+      - name: Create the fixture schema (as DOCTEST)
+        run: docker exec -w /tmp/doc_util ${{ job.services.oracle.id }} sqlplus -s -L doctest/Doctest_1@$DB @test/fixture.sql
+
+      - name: Run the tests (as DOCTEST, through invoker's rights)
+        run: docker exec -w /tmp/doc_util ${{ job.services.oracle.id }} sqlplus -s -L doctest/Doctest_1@$DB @test/run_tests.sql
+
+      - name: Write the fixture's data dictionary
+        if: always()
+        run: |
+          docker exec -w /tmp/doc_util ${{ job.services.oracle.id }} sqlplus -s -L doctest/Doctest_1@$DB @test/dictionary.sql > dictionary.md || true
+          cat dictionary.md
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fixture-dictionary
+          path: dictionary.md
