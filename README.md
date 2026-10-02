@@ -2,11 +2,10 @@
 
 A PL/SQL package useful for documenting Oracle database schemas. It can write Markdown or Org-mode tables and [Mermaid](https://mermaid.js.org/) entity relationship diagrams.
 
-- **A whole-schema data dictionary** in one call: contents, an ERD, table comments,
-  primary key, columns and foreign keys.
+- **A whole-schema data dictionary** ERD, table comments, columns and foreign keys.
 - **Per-table pieces**: comments, columns, foreign keys, and any query as a table.
-- **A comment audit**: how much of a schema is documented, and what isn't.
-- **Functions returning CLOBs**, so that you can spool the output.
+- **A comment audit**: how much of a schema is documented in the DDL.
+- **Functions returning CLOBs**, so that you can use the output in various ways. 
 
 ## Install
 
