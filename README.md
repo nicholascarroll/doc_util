@@ -41,15 +41,15 @@ EXEC doc_util.print_schema_dictionary('HR')
 
 `FORMAT WRAPPED` keeps leading spaces, which the Mermaid diagrams need.
 
-| Function | Print procedure | What it produces |
-|---|---|---|
-| `schema_dictionary(schema, include_erd)` | `print_schema_dictionary` | The whole schema as one Markdown document |
-| `table_comments(schema, table)` | `print_table_comments` | The table's comment, wrapped at 100 characters |
-| `table_columns(schema, table, format)` | `print_table_columns` | Name, data type, nullable and comment of each column |
-| `table_foreign_keys(schema, table, format)` | `print_table_foreign_keys` | Each foreign key and the columns it maps |
-| `schema_comment_audit(schema, include_detail)` | `audit_schema_comments` | The share of tables and columns with comments; with detail, the ones without |
-| `mermaid_erd(table_list, all_columns)` | `generate_mermaid_erd` | A Mermaid ERD of the listed tables and the foreign keys between them |
-| `format_query(query, format, max_width)` | `format_query_as_table` | Any query's rows as a table |
+| Function                                       | Print procedure            | What it produces                                                             |
+|------------------------------------------------|----------------------------|------------------------------------------------------------------------------|
+| `schema_dictionary(schema, include_erd)`       | `print_schema_dictionary`  | The whole schema as one Markdown document                                    |
+| `table_comments(schema, table)`                | `print_table_comments`     | The table's comment, wrapped at 100 characters                               |
+| `table_columns(schema, table, format)`         | `print_table_columns`      | Name, data type, nullable and comment of each column                         |
+| `table_foreign_keys(schema, table, format)`    | `print_table_foreign_keys` | Each foreign key and the columns it maps                                     |
+| `schema_comment_audit(schema, include_detail)` | `audit_schema_comments`    | The share of tables and columns with comments; with detail, the ones without |
+| `mermaid_erd(table_list, all_columns)`         | `generate_mermaid_erd`     | A Mermaid ERD of the listed tables and the foreign keys between them         |
+| `format_query(query, format, max_width)`       | `format_query_as_table`    | Any query's rows as a table                                                  |
 
 `print_clob(text)` prints any CLOB line by line.
 
@@ -68,12 +68,12 @@ EXEC doc_util.print_schema_dictionary('HR')
   key columns are shown.
 - **Errors are raised, not printed.**
 
-| Error | Meaning |
-|---|---|
-| `ORA-20001` | Table not found, or not visible to the caller |
+| Error       | Meaning                                              |
+|-------------|------------------------------------------------------|
+| `ORA-20001` | Table not found, or not visible to the caller        |
 | `ORA-20002` | An unqualified table name is in more than one schema |
-| `ORA-20003` | `mermaid_erd` was given no tables |
-| `ORA-20004` | Unknown format |
+| `ORA-20003` | `mermaid_erd` was given no tables                    |
+| `ORA-20004` | Unknown format                                       |
 
 Example output for the test schema is attached to every CI run as the
 `fixture-dictionary` artifact.
