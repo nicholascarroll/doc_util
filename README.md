@@ -99,4 +99,4 @@ package works through invoker's rights. Never run `setup.sql` against a producti
 
 ## Licence
 
-[MIT](LICENSE).
+[0BSD](LICENSE).
